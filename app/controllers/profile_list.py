@@ -17,7 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from os import walk
+from os import walk, stat
 from os.path import join
 
 from app import config
@@ -34,9 +34,12 @@ def get_profile_list():
                 filename = join(start, f)
                 file_path = join(config.PROFILE_DIR, filename)
                 file_type = get_profile_type(file_path)
+                _stat = stat(file_path)
                 all_files.append({
                     'filename': filename,
-                    'type': file_type
+                    'type': file_type,
+                    'age': _stat.st_mtime
                 })
 
+    all_files.sort(key=lambda l: l.get('age'), reverse=True)
     return all_files
